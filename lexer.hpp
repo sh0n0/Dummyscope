@@ -2,7 +2,14 @@
 #include <string>
 #include <vector>
 
-enum TokenType { TOK_EOF, TOK_DEF, TOK_EXTERN, TOK_IDENTIFIER, TOK_NUMBER };
+enum TokenType {
+  TOK_EOF,
+  TOK_DEF,
+  TOK_EXTERN,
+  TOK_IDENTIFIER,
+  TOK_NUMBER,
+  TOK_SYMBOL
+};
 
 class Token {
  private:
@@ -13,6 +20,8 @@ class Token {
  public:
   Token(TokenType type, std::string str);
   ~Token(){};
+  TokenType getTokenType() { return token_type; };
+  std::string getTokenString() { return token_string; };
 };
 
 class Lexer {
