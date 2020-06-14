@@ -87,7 +87,12 @@ Token read(const std::string& cur_line, int& idx) {
 std::shared_ptr<Token> Lexer::getCurToken() { return token_stream[cur_index]; }
 
 std::shared_ptr<Token> Lexer::getNextToken() {
-  return std::make_shared<Token>(Token(TOK_EOF, ""));
+  if (cur_index == token_stream.size() - 1) {
+    return nullptr;
+  } else {
+    cur_index++;
+    return getCurToken();
+  }
 }
 
 Token::Token(TokenType type, std::string str)
