@@ -41,6 +41,10 @@ Token read(const std::string& cur_line, int& idx) {
   if (isalpha(next_char)) {
     token_str += next_char;
     idx++;
+    if (idx == cur_line.length()) {
+      return Token(TOK_IDENTIFIER, token_str);
+    }
+
     next_char = cur_line.at(idx);
     while (isalnum(next_char)) {
       token_str += next_char;
