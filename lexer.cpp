@@ -3,8 +3,6 @@
 #include <fstream>
 #include <iostream>
 
-Token read(const std::string& cur_line, int& idx);
-
 void Lexer::lexicalAnalysis() {
   std::ifstream ifs(input_filename);
   if (!ifs) {
@@ -23,7 +21,7 @@ void Lexer::lexicalAnalysis() {
   }
 }
 
-Token read(const std::string& cur_line, int& idx) {
+Token Lexer::read(const std::string& cur_line, int& idx) {
   std::string token_str;
   char next_char;
 
@@ -56,8 +54,6 @@ Token read(const std::string& cur_line, int& idx) {
 
     if (token_str == "def") {
       return Token(TOK_DEF, token_str);
-    } else if (token_str == "extern") {
-      return Token(TOK_EXTERN, token_str);
     } else {
       return Token(TOK_IDENTIFIER, token_str);
     }

@@ -2,14 +2,7 @@
 #include <string>
 #include <vector>
 
-enum TokenType {
-  TOK_EOF,
-  TOK_DEF,
-  TOK_EXTERN,
-  TOK_IDENTIFIER,
-  TOK_NUMBER,
-  TOK_SYMBOL
-};
+enum TokenType { TOK_EOF, TOK_DEF, TOK_IDENTIFIER, TOK_NUMBER, TOK_SYMBOL };
 
 class Token {
  private:
@@ -21,7 +14,7 @@ class Token {
   Token(TokenType type, std::string str);
   ~Token(){};
   TokenType getTokenType() { return token_type; };
-  std::string getTokenString() { return token_string; };
+  const std::string& getTokenString() { return token_string; };
 };
 
 class Lexer {
@@ -29,6 +22,7 @@ class Lexer {
   std::string input_filename;
   std::vector<std::shared_ptr<Token>> token_stream;
   int cur_index;
+  Token read(const std::string& cur_line, int& idx);
 
  public:
   Lexer(std::string filename) : input_filename(filename){};
