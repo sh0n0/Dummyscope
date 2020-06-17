@@ -81,7 +81,25 @@ Token Lexer::read(const std::string& cur_line, int& idx) {
   // Symbol
   token_str += next_char;
   idx++;
-  return Token(TOK_SYMBOL, token_str);
+  return Token(mapStringToTokenType(token_str), token_str);
+}
+
+TokenType Lexer::mapStringToTokenType(const std::string& str) {
+  if (str == "(") {
+    return TOK_LPAREN;
+  } else if (str == ")") {
+    return TOK_RPAREN;
+  } else if (str == "+") {
+    return TOK_PLUS;
+  } else if (str == "-") {
+    return TOK_MINUS;
+  } else if (str == "*") {
+    return TOK_ASTERISK;
+  } else if (str == "/") {
+    return TOK_SLASH;
+  } else if (str == ",") {
+    return TOK_COMMA;
+  }
 }
 
 std::shared_ptr<Token> Lexer::getCurToken() { return token_stream[cur_index]; }
