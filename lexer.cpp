@@ -15,13 +15,14 @@ void Lexer::lexicalAnalysis() {
 
     int idx = 0;
     while (idx < cur_line.length()) {
-      Token next_token = read(cur_line, idx);
-      token_stream.push_back(std::make_shared<Token>(next_token));
+      auto next_token = read(cur_line, idx);
+      token_stream.push_back(std::move(next_token));
     }
   }
+  token_stream.push_back(std::make_unique<Token>(TOK_EOF, ""));
 }
 
-Token Lexer::read(const std::string& cur_line, int& idx) {
+std::unique_ptr<Token> Lexer::read(const std::string& cur_line, int& idx) {
   std::string token_str;
   char next_char;
 
@@ -33,14 +34,14 @@ Token Lexer::read(const std::string& cur_line, int& idx) {
   }
 
   // EOF
-  if (next_char == EOF) return Token(TOK_EOF, token_str);
+  if (next_char == EOF) return std::make_unique<Token>(TOK_EOF, token_str);
 
   // identifier
   if (isalpha(next_char)) {
     token_str += next_char;
     idx++;
     if (idx == cur_line.length()) {
-      return Token(TOK_IDENTIFIER, token_str);
+      return std::make_unique<Token>(TOK_IDENTIFIER, token_str);
     }
 
     next_char = cur_line.at(idx);
@@ -53,19 +54,19 @@ Token Lexer::read(const std::string& cur_line, int& idx) {
     }
 
     if (token_str == "def") {
-      return Token(TOK_DEF, token_str);
+      return std::make_unique<Token>(TOK_DEF, token_str);
     } else {
-      return Token(TOK_IDENTIFIER, token_str);
+      return std::make_unique<Token>(TOK_IDENTIFIER, token_str);
     }
   }
 
   // number
   if (isdigit(next_char)) {
     token_str += next_char;
-    if (next_char == '0') return Token(TOK_NUMBER, token_str);
+    if (next_char == '0') return std::make_unique<Token>(TOK_NUMBER, token_str);
     idx++;
     if (idx == cur_line.length()) {
-      return Token(TOK_NUMBER, token_str);
+      return std::make_unique<Token>(TOK_NUMBER, token_str);
     }
 
     next_char = cur_line.at(idx);
@@ -75,13 +76,13 @@ Token Lexer::read(const std::string& cur_line, int& idx) {
       if (idx == cur_line.length()) break;
       next_char = cur_line.at(idx);
     }
-    return Token(TOK_NUMBER, token_str);
+    return std::make_unique<Token>(TOK_NUMBER, token_str);
   }
 
   // Symbol
   token_str += next_char;
   idx++;
-  return Token(mapStringToTokenType(token_str), token_str);
+  return std::make_unique<Token>(mapStringToTokenType(token_str), token_str);
 }
 
 TokenType Lexer::mapStringToTokenType(const std::string& str) {
@@ -102,9 +103,11 @@ TokenType Lexer::mapStringToTokenType(const std::string& str) {
   }
 }
 
-std::shared_ptr<Token> Lexer::getCurToken() { return token_stream[cur_index]; }
+std::unique_ptr<Token> Lexer::getCurToken() {
+  return std::move(token_stream[cur_index]);
+}
 
-std::shared_ptr<Token> Lexer::getNextToken() {
+std::unique_ptr<Token> Lexer::getNextToken() {
   if (cur_index == token_stream.size() - 1) {
     return nullptr;
   } else {

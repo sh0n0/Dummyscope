@@ -33,16 +33,16 @@ class Token {
 class Lexer {
  private:
   std::string input_filename;
-  std::vector<std::shared_ptr<Token>> token_stream;
-  int cur_index;
-  Token read(const std::string& cur_line, int& idx);
+  std::vector<std::unique_ptr<Token>> token_stream;
+  int cur_index = 0;
+  std::unique_ptr<Token> read(const std::string& cur_line, int& idx);
   TokenType mapStringToTokenType(const std::string& str);
 
  public:
   Lexer(std::string filename) : input_filename(filename){};
   ~Lexer(){};
   void lexicalAnalysis();
-  std::shared_ptr<Token> getCurToken();
+  std::unique_ptr<Token> getCurToken();
   int getCurIndex() { return cur_index; }
-  std::shared_ptr<Token> getNextToken();
+  std::unique_ptr<Token> getNextToken();
 };
