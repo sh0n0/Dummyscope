@@ -23,14 +23,15 @@ static Precedence getPrecedence(TokenType type) {
 
 class Parser {
  private:
-  std::shared_ptr<Token> curToken;
-  std::shared_ptr<Token> peekToken;
+  std::unique_ptr<Token> curToken;
+  std::unique_ptr<Token> peekToken;
   std::unique_ptr<Lexer> lexer;
   std::unique_ptr<TranslationUnitAST> TU;
 
   void nextToken();
-  std::shared_ptr<Token> getCurToken();
-  std::shared_ptr<Token> getPeekToken();
+  std::unique_ptr<Token> getCurToken();
+  std::unique_ptr<Token> getPeekToken();
+  Precedence curPrecedence();
 
  public:
   Parser(std::string filename);
@@ -46,6 +47,6 @@ class Parser {
   std::unique_ptr<ExprAST> parseIdentifierExpr();
   std::unique_ptr<ExprAST> parseParenExpr();
   std::unique_ptr<CallExprAST> parseCallExpr(const std::string& callee_name);
-  std::unique_ptr<BinaryExprAST> parseBinaryOpExpr(
-      Precedence prec, std::unique_ptr<ExprAST> LHS);
+  std::unique_ptr<ExprAST> parseBinaryOpExpr(Precedence prev_prec,
+                                             std::unique_ptr<ExprAST> LHS);
 };

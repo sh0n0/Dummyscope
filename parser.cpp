@@ -5,16 +5,17 @@ Parser::Parser(std::string filename) {
   lexer->lexicalAnalysis();
   curToken = lexer->getCurToken();
   peekToken = lexer->getNextToken();
+  TU = std::make_unique<TranslationUnitAST>();
 }
 
 void Parser::nextToken() {
-  curToken = peekToken;
+  curToken = std::move(peekToken);
   peekToken = lexer->getNextToken();
 }
 
-std::shared_ptr<Token> Parser::getCurToken() { return curToken; }
+std::unique_ptr<Token> Parser::getCurToken() { return std::move(curToken); }
 
-std::shared_ptr<Token> Parser::getPeekToken() { return peekToken; }
+std::unique_ptr<Token> Parser::getPeekToken() { return std::move(peekToken); }
 
 bool Parser::parse() { return parseTransitionUnit(); }
 
@@ -26,21 +27,32 @@ bool Parser::parseTransitionUnit() {
     } else {
       return false;
     }
-    nextToken();
   }
   return true;
 }
 
-std::unique_ptr<BinaryExprAST> Parser::parseBinaryOpExpr(
-    Precedence prec, std::unique_ptr<ExprAST> LHS) {
-  // TODO
+std::unique_ptr<ExprAST> Parser::parseBinaryOpExpr(
+    Precedence prev_prec, std::unique_ptr<ExprAST> LHS) {
+  if (curToken->getTokenType() == TOK_EOF) return LHS;
+
+  Precedence cur_prec = curPrecedence();
+  if (cur_prec <= prev_prec) return LHS;
+
+  std::string op = curToken->getTokenString();
+  nextToken();
+
+  auto RHS = parsePrimary();
+  if (!RHS) return nullptr;
+
+  RHS = parseBinaryOpExpr(cur_prec, std::move(RHS));
+  if (!RHS) return nullptr;
+
+  return std::make_unique<BinaryExprAST>(op, std::move(LHS), std::move(RHS));
 }
 
 std::unique_ptr<ExprAST> Parser::parseExpression() {
   auto LHS = parsePrimary();
   if (!LHS) return nullptr;
-
-  nextToken();
 
   return parseBinaryOpExpr(LOWEST, std::move(LHS));
 }
@@ -63,6 +75,7 @@ std::unique_ptr<ExprAST> Parser::parsePrimary() {
 
 std::unique_ptr<NumberAST> Parser::parseNumberExpr() {
   double num = curToken->getTokenNum();
+  nextToken();
   return std::make_unique<NumberAST>(num);
 }
 
@@ -104,19 +117,18 @@ std::unique_ptr<CallExprAST> Parser::parseCallExpr(
 
   std::vector<std::unique_ptr<ExprAST>> args;
   auto arg = parseExpression();
+
   while (arg) {
     args.push_back(std::move(arg));
-
-    nextToken();
 
     if (curToken->getTokenType() == TOK_RPAREN) break;
 
     if (curToken->getTokenType() != TOK_COMMA) return nullptr;
 
+    // eat ,
     nextToken();
     arg = parseExpression();
   }
-  if (!arg) return nullptr;
 
   // eat )
   nextToken();
@@ -162,4 +174,8 @@ std::unique_ptr<FunctionAST> Parser::parseFunctionDefinition() {
   if (!body) return nullptr;
 
   return std::make_unique<FunctionAST>(std::move(proto), std::move(body));
+}
+
+Precedence Parser::curPrecedence() {
+  return getPrecedence(curToken->getTokenType());
 }
