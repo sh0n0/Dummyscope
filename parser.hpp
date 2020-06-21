@@ -1,3 +1,4 @@
+#pragma once
 #include <memory>
 #include <string>
 
@@ -23,27 +24,27 @@ static Precedence getPrecedence(TokenType type) {
 
 class Parser {
  private:
-  std::unique_ptr<Token> curToken;
-  std::unique_ptr<Token> peekToken;
+  Token* curToken;
+  Token* peekToken;
   std::unique_ptr<Lexer> lexer;
   std::unique_ptr<TranslationUnitAST> TU;
 
   void nextToken();
-  std::unique_ptr<Token> getCurToken();
-  std::unique_ptr<Token> getPeekToken();
   Precedence curPrecedence();
 
  public:
   Parser(std::string filename);
   ~Parser(){};
+  TranslationUnitAST* getTranslationUnitAST() { return TU.get(); }
   bool parse();
+
+ private:
   bool parseTransitionUnit();
-  std::unique_ptr<FunctionAST> parseFunction();
   std::unique_ptr<PrototypeAST> parsePrototype();
   std::unique_ptr<FunctionAST> parseFunctionDefinition();
   std::unique_ptr<ExprAST> parseExpression();
   std::unique_ptr<ExprAST> parsePrimary();
-  std::unique_ptr<NumberAST> parseNumberExpr();
+  std::unique_ptr<ExprAST> parseNumberExpr();
   std::unique_ptr<ExprAST> parseIdentifierExpr();
   std::unique_ptr<ExprAST> parseParenExpr();
   std::unique_ptr<CallExprAST> parseCallExpr(const std::string& callee_name);

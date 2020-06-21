@@ -9,13 +9,9 @@ Parser::Parser(std::string filename) {
 }
 
 void Parser::nextToken() {
-  curToken = std::move(peekToken);
+  curToken = peekToken;
   peekToken = lexer->getNextToken();
 }
-
-std::unique_ptr<Token> Parser::getCurToken() { return std::move(curToken); }
-
-std::unique_ptr<Token> Parser::getPeekToken() { return std::move(peekToken); }
 
 bool Parser::parse() { return parseTransitionUnit(); }
 
@@ -38,7 +34,8 @@ std::unique_ptr<ExprAST> Parser::parseBinaryOpExpr(
   Precedence cur_prec = curPrecedence();
   if (cur_prec <= prev_prec) return LHS;
 
-  std::string op = curToken->getTokenString();
+  OpType op = getOpType(curToken->getTokenType());
+  if (op == UNDEFINED) return nullptr;
   nextToken();
 
   auto RHS = parsePrimary();
@@ -73,7 +70,7 @@ std::unique_ptr<ExprAST> Parser::parsePrimary() {
   }
 }
 
-std::unique_ptr<NumberAST> Parser::parseNumberExpr() {
+std::unique_ptr<ExprAST> Parser::parseNumberExpr() {
   double num = curToken->getTokenNum();
   nextToken();
   return std::make_unique<NumberAST>(num);
