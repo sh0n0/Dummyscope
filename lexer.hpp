@@ -1,3 +1,4 @@
+#pragma once
 #include <memory>
 #include <string>
 #include <vector>
@@ -15,6 +16,41 @@ enum TokenType {
   TOK_SLASH,
   TOK_COMMA,
 };
+
+enum OpType { ADD, SUB, MUL, DIV, UNDEFINED };
+
+static TokenType mapStringToTokenType(const std::string& str) {
+  if (str == "(") {
+    return TOK_LPAREN;
+  } else if (str == ")") {
+    return TOK_RPAREN;
+  } else if (str == "+") {
+    return TOK_PLUS;
+  } else if (str == "-") {
+    return TOK_MINUS;
+  } else if (str == "*") {
+    return TOK_ASTERISK;
+  } else if (str == "/") {
+    return TOK_SLASH;
+  } else if (str == ",") {
+    return TOK_COMMA;
+  }
+}
+
+static OpType getOpType(TokenType type) {
+  switch (type) {
+    case TOK_PLUS:
+      return ADD;
+    case TOK_MINUS:
+      return SUB;
+    case TOK_ASTERISK:
+      return MUL;
+    case TOK_SLASH:
+      return DIV;
+    default:
+      return UNDEFINED;
+  }
+}
 
 class Token {
  private:
@@ -36,13 +72,12 @@ class Lexer {
   std::vector<std::unique_ptr<Token>> token_stream;
   int cur_index = 0;
   std::unique_ptr<Token> read(const std::string& cur_line, int& idx);
-  TokenType mapStringToTokenType(const std::string& str);
 
  public:
   Lexer(std::string filename) : input_filename(filename){};
   ~Lexer(){};
   void lexicalAnalysis();
-  std::unique_ptr<Token> getCurToken();
+  Token* getCurToken();
   int getCurIndex() { return cur_index; }
-  std::unique_ptr<Token> getNextToken();
+  Token* getNextToken();
 };

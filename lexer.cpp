@@ -85,29 +85,9 @@ std::unique_ptr<Token> Lexer::read(const std::string& cur_line, int& idx) {
   return std::make_unique<Token>(mapStringToTokenType(token_str), token_str);
 }
 
-TokenType Lexer::mapStringToTokenType(const std::string& str) {
-  if (str == "(") {
-    return TOK_LPAREN;
-  } else if (str == ")") {
-    return TOK_RPAREN;
-  } else if (str == "+") {
-    return TOK_PLUS;
-  } else if (str == "-") {
-    return TOK_MINUS;
-  } else if (str == "*") {
-    return TOK_ASTERISK;
-  } else if (str == "/") {
-    return TOK_SLASH;
-  } else if (str == ",") {
-    return TOK_COMMA;
-  }
-}
+Token* Lexer::getCurToken() { return token_stream[cur_index].get(); }
 
-std::unique_ptr<Token> Lexer::getCurToken() {
-  return std::move(token_stream[cur_index]);
-}
-
-std::unique_ptr<Token> Lexer::getNextToken() {
+Token* Lexer::getNextToken() {
   if (cur_index == token_stream.size() - 1) {
     return nullptr;
   } else {
