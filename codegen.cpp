@@ -75,7 +75,7 @@ llvm::Value* CodeGen::generateExpr(ExprAST* ast) {
 
 llvm::Value* CodeGen::generateBinaryExpr(BinaryExprAST* ast) {
   llvm::Value* LHS = generateExpr(ast->getLHS());
-  llvm::Value* RHS = generateExpr(ast->getLHS());
+  llvm::Value* RHS = generateExpr(ast->getRHS());
   if (!LHS || !RHS) {
     std::cerr << "Invalid expression in binary operation" << std::endl;
     return nullptr;
