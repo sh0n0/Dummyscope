@@ -11,6 +11,8 @@ CodeGen::CodeGen() {
 }
 
 bool CodeGen::generate(TranslationUnitAST* ast) {
+  addBuiltinFunction();
+
   for (int i = 0;; ++i) {
     FunctionAST* func = ast->getFunction(i);
     if (!func) break;
@@ -139,3 +141,11 @@ void CodeGen::setNamedValue(const std::string& name, llvm::Value* value) {
 }
 
 void CodeGen::clearNamedValue() { named_values.clear(); }
+
+void CodeGen::addBuiltinFunction() {
+  // print
+  auto int32Type = builder->getInt32Ty();
+  std::vector<llvm::Type*> print_args(1, int32Type->getPointerTo());
+  auto func_type = llvm::FunctionType::get(builder->getVoidTy(), print_args, false);
+  module->getOrInsertFunction("print", func_type);
+}

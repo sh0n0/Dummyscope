@@ -38,8 +38,11 @@ class CodeGen {
 
   llvm::Value* generateCallExpr(CallExprAST* ast);
 
+  llvm::Value* generateVariable(VariableAST* ast);
+
   void setNamedValue(const std::string& name, llvm::Value* value);
 
   void clearNamedValue();
-  llvm::Value* generateVariable(VariableAST* ast);
+
+  void addBuiltinFunction();
 };
