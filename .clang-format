@@ -1,2 +1,3 @@
 BasedOnStyle: Google
 PointerAlignment: Left
+ColumnLimit: 120

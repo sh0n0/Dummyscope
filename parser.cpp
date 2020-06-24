@@ -82,8 +82,7 @@ std::unique_ptr<ExprAST> Parser::parseIdentifierExpr() {
 
   nextToken();
 
-  if (curToken->getTokenType() != TOK_LPAREN)
-    return std::make_unique<VariableAST>(name);
+  if (curToken->getTokenType() != TOK_LPAREN) return std::make_unique<VariableAST>(name);
 
   // Call
   auto call = parseCallExpr(name);
@@ -106,8 +105,7 @@ std::unique_ptr<ExprAST> Parser::parseParenExpr() {
   return expr;
 }
 
-std::unique_ptr<CallExprAST> Parser::parseCallExpr(
-    const std::string& callee_name) {
+std::unique_ptr<CallExprAST> Parser::parseCallExpr(const std::string& callee_name) {
   if (curToken->getTokenType() != TOK_LPAREN) return nullptr;
 
   // eat (
@@ -174,6 +172,4 @@ std::unique_ptr<FunctionAST> Parser::parseFunctionDefinition() {
   return std::make_unique<FunctionAST>(std::move(proto), std::move(body));
 }
 
-Precedence Parser::curPrecedence() {
-  return getPrecedence(curToken->getTokenType());
-}
+Precedence Parser::curPrecedence() { return getPrecedence(curToken->getTokenType()); }

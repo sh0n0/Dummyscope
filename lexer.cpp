@@ -11,8 +11,6 @@ void Lexer::lexicalAnalysis() {
 
   std::string cur_line;
   while (getline(ifs, cur_line)) {
-    std::cout << cur_line << std::endl;
-
     int idx = 0;
     while (idx < cur_line.length()) {
       auto next_token = read(cur_line, idx);

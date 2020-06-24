@@ -45,12 +45,9 @@ llvm::Function* CodeGen::generateFunction(FunctionAST* ast) {
 }
 
 llvm::Function* CodeGen::generateProtoType(PrototypeAST* ast) {
-  std::vector<llvm::Type*> params(ast->getArgsSize(),
-                                  llvm::Type::getInt32Ty(*context));
-  auto func_type =
-      llvm::FunctionType::get(llvm::Type::getInt32Ty(*context), params, false);
-  auto func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage,
-                                     ast->getName(), module.get());
+  std::vector<llvm::Type*> params(ast->getArgsSize(), llvm::Type::getInt32Ty(*context));
+  auto func_type = llvm::FunctionType::get(llvm::Type::getInt32Ty(*context), params, false);
+  auto func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage, ast->getName(), module.get());
 
   int idx = 0;
   for (auto& arg : func->args()) {
@@ -99,8 +96,7 @@ llvm::Value* CodeGen::generateBinaryExpr(BinaryExprAST* ast) {
 }
 
 llvm::Value* CodeGen::generateNumber(NumberAST* ast) {
-  auto int_value = llvm::ConstantInt::get(
-      llvm::IntegerType::getInt32Ty(*context), ast->getValue(), true);
+  auto int_value = llvm::ConstantInt::get(llvm::IntegerType::getInt32Ty(*context), ast->getValue(), true);
   return llvm::cast<llvm::Value>(int_value);
 }
 
@@ -136,9 +132,7 @@ llvm::Value* CodeGen::generateVariable(VariableAST* ast) {
   return value;
 }
 
-void CodeGen::setNamedValue(const std::string& name, llvm::Value* value) {
-  named_values[name] = value;
-}
+void CodeGen::setNamedValue(const std::string& name, llvm::Value* value) { named_values[name] = value; }
 
 void CodeGen::clearNamedValue() { named_values.clear(); }
 

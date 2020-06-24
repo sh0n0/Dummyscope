@@ -30,9 +30,7 @@ class NumberAST : public ExprAST {
 
   int getValue() { return value; }
 
-  static inline bool classof(ExprAST const* expr) {
-    return expr->getValueId() == NumberExpr;
-  }
+  static inline bool classof(ExprAST const* expr) { return expr->getValueId() == NumberExpr; }
 };
 
 class VariableAST : public ExprAST {
@@ -46,9 +44,7 @@ class VariableAST : public ExprAST {
 
   std::string getName() { return name; }
 
-  static inline bool classof(ExprAST const* expr) {
-    return expr->getValueId() == VariableExpr;
-  }
+  static inline bool classof(ExprAST const* expr) { return expr->getValueId() == VariableExpr; }
 };
 
 class BinaryExprAST : public ExprAST {
@@ -57,8 +53,7 @@ class BinaryExprAST : public ExprAST {
   std::unique_ptr<ExprAST> LHS, RHS;
 
  public:
-  BinaryExprAST(OpType op, std::unique_ptr<ExprAST> LHS,
-                std::unique_ptr<ExprAST> RHS)
+  BinaryExprAST(OpType op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS)
       : ExprAST(BinaryExpr), op(op), LHS(std::move(LHS)), RHS(std::move(RHS)){};
 
   ~BinaryExprAST(){};
@@ -66,9 +61,7 @@ class BinaryExprAST : public ExprAST {
   ExprAST* getRHS() { return RHS.get(); }
   OpType getOp() { return op; }
 
-  static inline bool classof(ExprAST const* expr) {
-    return expr->getValueId() == BinaryExpr;
-  }
+  static inline bool classof(ExprAST const* expr) { return expr->getValueId() == BinaryExpr; }
 };
 
 class CallExprAST : public ExprAST {
@@ -86,9 +79,7 @@ class CallExprAST : public ExprAST {
   int getArgsSize() { return args.size(); }
   ExprAST* getArgExpr(int idx);
 
-  static inline bool classof(ExprAST const* expr) {
-    return expr->getValueId() == CallExpr;
-  }
+  static inline bool classof(ExprAST const* expr) { return expr->getValueId() == CallExpr; }
 };
 
 class PrototypeAST {
@@ -97,8 +88,7 @@ class PrototypeAST {
   std::vector<std::string> args;
 
  public:
-  PrototypeAST(std::string name, std::vector<std::string> args)
-      : name(name), args(args){};
+  PrototypeAST(std::string name, std::vector<std::string> args) : name(name), args(args){};
 
   ~PrototypeAST(){};
 
@@ -113,8 +103,7 @@ class FunctionAST {
   std::unique_ptr<ExprAST> body;
 
  public:
-  FunctionAST(std::unique_ptr<PrototypeAST> proto,
-              std::unique_ptr<ExprAST> body)
+  FunctionAST(std::unique_ptr<PrototypeAST> proto, std::unique_ptr<ExprAST> body)
       : proto(std::move(proto)), body(std::move(body)){};
 
   ~FunctionAST(){};
