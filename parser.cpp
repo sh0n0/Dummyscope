@@ -27,24 +27,25 @@ bool Parser::parseTransitionUnit() {
   return true;
 }
 
-std::unique_ptr<ExprAST> Parser::parseBinaryOpExpr(
-    Precedence prev_prec, std::unique_ptr<ExprAST> LHS) {
+std::unique_ptr<ExprAST> Parser::parseBinaryOpExpr(Precedence prev_prec, std::unique_ptr<ExprAST> LHS) {
   if (curToken->getTokenType() == TOK_EOF) return LHS;
 
-  Precedence cur_prec = curPrecedence();
-  if (cur_prec <= prev_prec) return LHS;
+  while (true) {
+    Precedence cur_prec = curPrecedence();
+    if (cur_prec <= prev_prec) return LHS;
 
-  OpType op = getOpType(curToken->getTokenType());
-  if (op == UNDEFINED) return nullptr;
-  nextToken();
+    OpType op = getOpType(curToken->getTokenType());
+    if (op == UNDEFINED) return nullptr;
+    nextToken();
 
-  auto RHS = parsePrimary();
-  if (!RHS) return nullptr;
+    auto RHS = parsePrimary();
+    if (!RHS) return nullptr;
 
-  RHS = parseBinaryOpExpr(cur_prec, std::move(RHS));
-  if (!RHS) return nullptr;
+    RHS = parseBinaryOpExpr(cur_prec, std::move(RHS));
+    if (!RHS) return nullptr;
 
-  return std::make_unique<BinaryExprAST>(op, std::move(LHS), std::move(RHS));
+    LHS = std::make_unique<BinaryExprAST>(op, std::move(LHS), std::move(RHS));
+  }
 }
 
 std::unique_ptr<ExprAST> Parser::parseExpression() {
