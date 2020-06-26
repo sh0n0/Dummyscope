@@ -88,7 +88,7 @@ llvm::Value* CodeGen::generateBinaryExpr(BinaryExprAST* ast) {
     case MUL:
       return builder->CreateMul(LHS, RHS, "multmp");
     case DIV:
-      return builder->CreateFDiv(LHS, RHS, "divtmp");
+      return builder->CreateUDiv(LHS, RHS, "divtmp");
     case UNDEFINED:
       std::cerr << "failed generating binary operation code" << std::endl;
       return nullptr;
