@@ -1,6 +1,7 @@
 # Dummyscope
 
-Dummyscope is a simplified version of [Kaleidoscope](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html) and its code structure is similar to [DummyCCompiler](https://github.com/Kmotiko/DummyCCompiler).
+Dummyscope is a toy compiler using LLVM.
+Its syntax and code structure are similar to [Kaleidoscope](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html) and [DummyCCompiler](https://github.com/Kmotiko/DummyCCompiler) respectively.
 
 ## Example
 The example of dummyscope source code in the example directory is shown below.
