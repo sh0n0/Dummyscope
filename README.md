@@ -25,7 +25,7 @@ def main()
   print(add(2, 2) + sub(3, 1) * mul(3, 4) - div(square(4), 2))
 ```
 
-You can see the result by following the commands:
+You can see the result as follows:
 ```
 $ cd example
 $ ./dsc calc.ds
